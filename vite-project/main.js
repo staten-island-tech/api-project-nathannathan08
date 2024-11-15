@@ -1,24 +1,30 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+//get data
+//promises
+//show data
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+async function getData(){
+    //returns a promise
+    try {
+        const response = await fetch('https://valorant-api.com/v1/agents')
+        //guard clause
+        if(response.status != 200) {
+            throw new Error(response);
+        }else{
+            //convert promise to json
+    const data = await response.json();
+    console.log(data.data)
+    //this is unique to THIS API 
+    data.dta.forEach(agent) => document.querySelector("div").insertAdjacentHTML
+    ("afterbegin", <h1>${agent.displayName}</h1>
+    )
+        }
+    }
+    catch (error) {
+            alert("hey i cant find it");
+        }
+  
+    
+}
 
-setupCounter(document.querySelector('#counter'))
+getData();
