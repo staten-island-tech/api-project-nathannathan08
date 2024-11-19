@@ -3,28 +3,27 @@ import './style.css'
 //promises
 //show data
 
-async function getData(){
+async function getData() {
     //returns a promise
     try {
-        const response = await fetch('https://valorant-api.com/v1/agents')
+        const response = await fetch('https://apilayer.com/marketplace/checkiday-api');
         //guard clause
-        if(response.status != 200) {
+        if (response.status !== 200) {
             throw new Error(response);
-        }else{
+        } else {
             //convert promise to json
-    const data = await response.json();
-    console.log(data.data)
-    //this is unique to THIS API 
-    data.dta.forEach(agent) => document.querySelector("div").insertAdjacentHTML
-    ("afterbegin", <h1>${agent.displayName}</h1>
-    )
+            const data = await response.json();
+            console.log(data);
+            //this is unique to THIS API 
+            data.forEach(user => {
+                document.querySelector("#app").insertAdjacentHTML(
+                    "afterbegin", `<h1>${user.name}}</h1>`
+                );
+            });
         }
+    } catch (error) {
+        alert("Hey, I can't find it.");
     }
-    catch (error) {
-            alert("hey i cant find it");
-        }
-  
-    
 }
 
 getData();
