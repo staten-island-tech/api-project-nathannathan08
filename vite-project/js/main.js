@@ -1,54 +1,78 @@
-import './css/style.css'; // Assuming you have TailwindCSS for styling
+import '../css/style.css';
 
 const URL = "https://amiiboapi.com/api/amiibo";
+let allAmiibos = [];
 
+// Fetch the data once when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    getData(URL);
+});
+
+// Add event listener to search button
+document.getElementById('search-button').addEventListener('click', () => {
+    const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+    const filteredAmiibos = filterAmiibos(searchQuery); // Filter Amiibos based on the search query
+    renderCards(filteredAmiibos); // Re-render the filtered cards
+});
+
+document.getElementById('reset-button').addEventListener('click', () => {
+    document.getElementById('search-bar').value = ''; // Clear the search bar
+    renderCards(allAmiibos); // Render all Amiibos (no filter applied)
+});
+
+// Fetch data from the API
 async function getData(URL) {
     try {
-        // Fetch data from the API
         const response = await fetch(URL);
-        
-        // Log the response status and the actual response data for debugging
-        console.log('Response Status:', response.status);
-        
-        // Convert the response to JSON
         const data = await response.json();
 
-        // Log the data to check its structure
-        console.log('API Data:', data);
-
-        // Check the structure of the data before accessing it
+        // Check if the data is in the expected format
         if (data && data.amiibo && Array.isArray(data.amiibo)) {
-            // Get the container where the cards will go
-            const cardContainer = document.getElementById('card-container');
-            
-            // Loop through each amiibo in the data and create a card for each one
-            data.amiibo.forEach(amiibo => {
-                // Create the HTML content for the card
-                const cardHTML = `
-                    <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white">
-                        <img class="w-full" src="${amiibo.image}" alt="${amiibo.name}">
-                        <div class="px-6 py-4">
-                            <h2 class="font-bold text-xl">${amiibo.name}</h2>
-                            <p class="text-gray-700 text-base">
-                                ${amiibo.series || "No series available"}
-                            </p>
-                        </div>
-                    </div>
-                `;
-
-                // Insert the card HTML into the container using insertAdjacentHTML
-                cardContainer.insertAdjacentHTML('beforeend', cardHTML);
-            });
+            allAmiibos = data.amiibo; // Store the full data
+            renderCards(allAmiibos);   // Render the cards initially
         } else {
-            // If data is not as expected, display an error message
             document.getElementById("api-response").textContent = "Unexpected data format.";
         }
     } catch (error) {
-        // Log any errors to the console and show a generic error message
         console.log('Error:', error);
         document.getElementById("api-response").textContent = "Failed to load data.";
     }
 }
 
-// Call the function to fetch the data
-getData(URL);
+// Function to filter Amiibos based on the search query
+function filterAmiibos(query) {
+    return allAmiibos.filter(amiibo => {
+        return amiibo.name.toLowerCase().includes(query) || 
+               (amiibo.gameSeries && amiibo.gameSeries.toLowerCase().includes(query));
+    });
+}
+
+// Function to render Amiibo cards to the DOM
+function renderCards(amiibos) {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.innerHTML = ''; // Clear the previous cards
+
+    // If no results are found, show a message
+    if (amiibos.length === 0) {
+        cardContainer.innerHTML = '<p>No Amiibos found.</p>';
+        return;
+    }
+
+    // Render each Amiibo card
+    amiibos.forEach(amiibo => {
+        const cardHTML = `
+        <div class="card">
+            <img src="${amiibo.image}" alt="${amiibo.name}" class="card-img" />
+            <div class="card-content">
+                <h2>${amiibo.name}</h2>
+                <p>${amiibo.gameSeries || "No series available"}</p>
+                <r>NA Release: ${amiibo.release.na}</r><br>
+                <r>JP Release: ${amiibo.release.jp}</r><br>
+                <r>EU Release: ${amiibo.release.eu}</r><br>
+                <r>AU Release: ${amiibo.release.au}</r><br>
+            </div>
+        </div>
+        `;
+        cardContainer.insertAdjacentHTML('beforeend', cardHTML);
+    });
+}
