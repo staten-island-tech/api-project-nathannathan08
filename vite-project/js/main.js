@@ -3,33 +3,32 @@ import '../css/style.css';
 const URL = "https://amiiboapi.com/api/amiibo";
 let allAmiibos = [];
 
-// Fetch the data once when the page loads
+
 document.addEventListener('DOMContentLoaded', () => {
     getData(URL);
 });
 
-// Add event listener to search button
+
 document.getElementById('search-button').addEventListener('click', () => {
     const searchQuery = document.getElementById('search-bar').value.toLowerCase();
-    const filteredAmiibos = filterAmiibos(searchQuery); // Filter Amiibos based on the search query
-    renderCards(filteredAmiibos); // Re-render the filtered cards
+    const filteredAmiibos = filterAmiibos(searchQuery); 
+    renderCards(filteredAmiibos); 
 });
 
 document.getElementById('reset-button').addEventListener('click', () => {
-    document.getElementById('search-bar').value = ''; // Clear the search bar
-    renderCards(allAmiibos); // Render all Amiibos (no filter applied)
+    document.getElementById('search-bar').value = ''; 
+    renderCards(allAmiibos); 
 });
 
-// Fetch data from the API
+
 async function getData(URL) {
     try {
         const response = await fetch(URL);
         const data = await response.json();
 
-        // Check if the data is in the expected format
         if (data && data.amiibo && Array.isArray(data.amiibo)) {
-            allAmiibos = data.amiibo; // Store the full data
-            renderCards(allAmiibos);   // Render the cards initially
+            allAmiibos = data.amiibo; 
+            renderCards(allAmiibos);   
         } else {
             document.getElementById("api-response").textContent = "Unexpected data format.";
         }
@@ -39,7 +38,7 @@ async function getData(URL) {
     }
 }
 
-// Function to filter Amiibos based on the search query
+
 function filterAmiibos(query) {
     return allAmiibos.filter(amiibo => {
         return amiibo.name.toLowerCase().includes(query) || 
@@ -47,18 +46,18 @@ function filterAmiibos(query) {
     });
 }
 
-// Function to render Amiibo cards to the DOM
+
 function renderCards(amiibos) {
     const cardContainer = document.getElementById('card-container');
-    cardContainer.innerHTML = ''; // Clear the previous cards
+    cardContainer.innerHTML = ''; 
 
-    // If no results are found, show a message
+    
     if (amiibos.length === 0) {
         cardContainer.innerHTML = '<p>No Amiibos found.</p>';
         return;
     }
 
-    // Render each Amiibo card
+
     amiibos.forEach(amiibo => {
         const cardHTML = `
         <div class="card">
