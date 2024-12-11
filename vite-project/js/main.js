@@ -1,6 +1,6 @@
 import '../css/style.css';
 
-const URL = "https://amiiboapi.com/api/amiibo";
+const URL = "https://amiiboapi.com/api/amiibo/";
 let allAmiibos = [];
 
 
